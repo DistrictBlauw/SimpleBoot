@@ -1,6 +1,11 @@
-## SimpleBoot will soon be a product of RedHead Industries, a non-profit organization that I have founded -- By the people, for the people. This does not mean SimpleBoot will go proprietary, this is simply a change of ownership (and where SimpleBoot's repository will be at).
+### RedHead operates independently and relies entirely on community donations to stay online and continue developing free and open-source projects. We support Bitcoin, Monero, and Stripe -- but we prefer bitcoin/monero donations, as Stripe is unreliable as of the current moment.
+### You can find all of our donation methods on our website:
+[redheadindustries.xyz](https://redheadindustries.xyz)
 
-# 📱 SimpleBoot
+# SimpleBoot – Turn your phone into a bootable USB device!
+**Version:** v2.1 “Monster – Milestone 2”  
+**License:** GNU General Public License v3 (GPLv3)  
+**Developer:** RedHead Industries (Technologies Branch) + Matthew DaLuz [@matthewdaluz](https://github.com/matthewdaluz)
 
 **SimpleBoot** is a powerful, root-required Android app that transforms your phone into a fully bootable USB device. Mount ISO/IMG files via **ConfigFS**, **Legacy mass_storage**, or raw **Loopback** mode and boot directly into live systems on any PC.
 
@@ -20,7 +25,6 @@
 - 🧠 **Complete logging** of all mount/unmount operations (`SimpleBootLogs`)
 - 🌓 **Light/Dark mode** Jetpack Compose UI
 - 🛠️ **Per-ISO selection** of mount method
-- 🧲 **Toggle USB Charging + ADB** from within the UI
 - ⚙️ **Persistent preferences** for read-only mounting
 - 📤 Export logs and diagnostics for debugging
 
@@ -29,9 +33,10 @@
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/81af67c3-1c10-40dc-bf7e-81a62158c33a" alt="Screenshot 1" width="200"/>
-  <img src="https://github.com/user-attachments/assets/81af67c3-1c10-40dc-bf7e-81a62158c33a" alt="Screenshot 2" width="200"/>
+<img width="200" height="2400" alt="Screenshot_20251112-090816_SimpleBoot" src="https://github.com/user-attachments/assets/e142920c-f9a4-46b2-bb16-caea69cda997" />
+<img width="200" height="2400" alt="Screenshot_20251112-090820_SimpleBoot" src="https://github.com/user-attachments/assets/48a7adc9-c170-478b-ab4e-ba6f4f744611" />
 </p>
+
 
 ## ⚙️ Requirements
 
