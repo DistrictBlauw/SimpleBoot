@@ -20,6 +20,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.topjohnwu.superuser.Shell
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.launch
 import redhead.app.simpleboot.model.IsoFile
 import redhead.app.simpleboot.ui.theme.SimpleBootTheme
@@ -32,7 +35,8 @@ class MainActivity : ComponentActivity() {
 
         LogManager.logToFile(this, "MainActivity.onCreate() - App launched")
 
-        if (!Shell.getShell().isRoot) {
+        // Flexible root detection: prefer libsu but fall back to probing common su binaries
+        if (!hasRootAccess()) {
             Toast.makeText(this, "Root access is required!", Toast.LENGTH_LONG).show()
             LogManager.logToFile(this, "Root access missing - closing app")
             finish()
@@ -45,6 +49,46 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+/**
+ * Attempts to detect and request root access from available su implementations.
+ * Uses libsu/Shell first, then probes by executing `id` through known binaries
+ * such as `ksu` (KernelSU) and `su` to trigger their grant dialogs.
+ */
+fun ComponentActivity.hasRootAccess(timeoutMs: Long = 2000): Boolean {
+    // First, check libsu's idea of root
+    try {
+        if (Shell.getShell().isRoot) return true
+        val r = Shell.cmd("id").exec()
+        val out = (r.out + r.err).joinToString("\n")
+        if (out.contains("uid=0")) return true
+    } catch (e: Exception) {
+        LogManager.logToFile(this, "hasRootAccess: libsu id check failed: ${e.message}")
+    }
+
+    // Try common su binaries that may be provided by KernelSU or other implementations.
+    val bins = listOf("ksu", "su")
+    for (bin in bins) {
+        try {
+            LogManager.logToFile(this, "hasRootAccess: attempting $bin to request permission")
+            val proc = Runtime.getRuntime().exec(arrayOf(bin, "-c", "id"))
+            if (!proc.waitFor(timeoutMs, TimeUnit.MILLISECONDS)) {
+                proc.destroy()
+                LogManager.logToFile(this, "hasRootAccess: $bin timed out")
+                continue
+            }
+            val stdout = BufferedReader(InputStreamReader(proc.inputStream)).use { it.readText() }
+            val stderr = BufferedReader(InputStreamReader(proc.errorStream)).use { it.readText() }
+            val combined = (stdout + "\n" + stderr)
+            LogManager.logToFile(this, "hasRootAccess: $bin output: ${combined.take(1000)}")
+            if (combined.contains("uid=0")) return true
+        } catch (e: Exception) {
+            LogManager.logToFile(this, "hasRootAccess: $bin execution failed: ${e.message}")
+        }
+    }
+
+    return false
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
