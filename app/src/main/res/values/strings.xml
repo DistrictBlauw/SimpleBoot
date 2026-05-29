@@ -29,6 +29,18 @@
     <string name="mount_failed">Failed to mount: %s</string>
     <string name="unknown_error">Unknown error occurred.</string>
 
+    <!-- Create Blank ISO -->
+    <string name="create_blank_iso">Create Blank Image</string>
+    <string name="create_blank_title">Create Blank Image</string>
+    <string name="file_name">File name</string>
+    <string name="file_format">Format</string>
+    <string name="file_size_mb">Size (MB)</string>
+    <string name="create">Create</string>
+    <string name="blank_iso_created">Created: %s</string>
+    <string name="blank_iso_failed">Failed to create image.</string>
+    <string name="blank_iso_exists">File already exists.</string>
+    <string name="blank_iso_invalid_name">Invalid file name.</string>
+
     <!-- Credits -->
     <string name="credits_title">Credits</string>
     <string name="back">Back</string>

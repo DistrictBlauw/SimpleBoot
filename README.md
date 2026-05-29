@@ -38,6 +38,7 @@
 - 🛠️ **Per-ISO selection** of mount method
 - ⚙️ **Persistent preferences** for read-only mounting
 - 📤 Export logs and diagnostics for debugging
+- 🆕 **Create blank ISO/IMG files** directly from the app for quick testing
 
 ---
 

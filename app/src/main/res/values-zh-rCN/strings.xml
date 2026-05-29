@@ -29,6 +29,18 @@
     <string name="mount_failed">挂载失败：%s</string>
     <string name="unknown_error">发生未知错误。</string>
 
+    <!-- Create Blank ISO -->
+    <string name="create_blank_iso">创建空白镜像</string>
+    <string name="create_blank_title">创建空白镜像</string>
+    <string name="file_name">文件名</string>
+    <string name="file_format">格式</string>
+    <string name="file_size_mb">大小（MB）</string>
+    <string name="create">创建</string>
+    <string name="blank_iso_created">已创建：%s</string>
+    <string name="blank_iso_failed">创建镜像失败。</string>
+    <string name="blank_iso_exists">文件已存在。</string>
+    <string name="blank_iso_invalid_name">无效的文件名。</string>
+
     <!-- Credits -->
     <string name="credits_title">关于</string>
     <string name="back">返回</string>

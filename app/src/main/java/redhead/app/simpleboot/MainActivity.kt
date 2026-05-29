@@ -108,6 +108,7 @@ fun AppScreen() {
     var selectedMethod by remember { mutableStateOf(MountMethod.CONFIGFS) }
     var selectedUsbMode by remember { mutableStateOf(UsbMode.USB_HDD) }
     var showCredits by remember { mutableStateOf(false) }
+    var showCreateBlank by remember { mutableStateOf(false) }
 
     val strStatusIdle = stringResource(R.string.status_idle)
     val strUnknownError = stringResource(R.string.unknown_error)
@@ -121,6 +122,10 @@ fun AppScreen() {
     val strFileLabel = stringResource(R.string.file_label)
     val strMethodLabel = stringResource(R.string.method_label)
     val strUsbMethodLabel = stringResource(R.string.usb_method_label)
+    val strBlankCreated = stringResource(R.string.blank_iso_created)
+    val strBlankFailed = stringResource(R.string.blank_iso_failed)
+    val strBlankExists = stringResource(R.string.blank_iso_exists)
+    val strBlankInvalidName = stringResource(R.string.blank_iso_invalid_name)
 
     LaunchedEffect(Unit) {
         if (statusText.isEmpty()) statusText = strStatusIdle
@@ -208,6 +213,13 @@ fun AppScreen() {
                         expanded = menuExpanded,
                         onDismissRequest = { menuExpanded = false }
                     ) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.create_blank_iso)) },
+                            onClick = {
+                                menuExpanded = false
+                                showCreateBlank = true
+                            }
+                        )
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.credits)) },
                             onClick = {
@@ -396,6 +408,67 @@ fun AppScreen() {
                     LogManager.logToFile(context, "Mount dialog cancelled")
                     showMountMenu = false
                 }) { Text(stringResource(R.string.cancel)) }
+            }
+        )
+    }
+
+    if (showCreateBlank) {
+        var blankName by remember { mutableStateOf("") }
+        var blankSize by remember { mutableStateOf("64") }
+        var blankExt by remember { mutableStateOf("iso") }
+
+        AlertDialog(
+            onDismissRequest = { showCreateBlank = false },
+            title = { Text(stringResource(R.string.create_blank_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    OutlinedTextField(
+                        value = blankName,
+                        onValueChange = { blankName = it },
+                        label = { Text(stringResource(R.string.file_name)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = blankSize,
+                        onValueChange = { blankSize = it.filter { c -> c.isDigit() } },
+                        label = { Text(stringResource(R.string.file_size_mb)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        listOf("iso" to "ISO", "img" to "IMG").forEach { (ext, label) ->
+                            FilterChip(
+                                selected = blankExt == ext,
+                                onClick = { blankExt = ext },
+                                label = { Text(label) }
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                Button(onClick = {
+                    val sizeMB = blankSize.toIntOrNull() ?: 0
+                    LogManager.logToFile(context, "Create blank image: name=$blankName, ext=$blankExt, size=${sizeMB}MB")
+                    val result = StorageManager.createBlankImage(context, blankName, blankExt, sizeMB)
+                    if (result != null) {
+                        statusText = String.format(strBlankCreated, result.name)
+                        snackbarHostState.showSnackbar(statusText)
+                        isoList = StorageManager.getIsoFileList()
+                        LogManager.logToFile(context, "Blank image created: ${result.name}")
+                        showCreateBlank = false
+                    } else if (blankName.isBlank()) {
+                        snackbarHostState.showSnackbar(strBlankInvalidName)
+                    } else {
+                        snackbarHostState.showSnackbar(strBlankExists)
+                    }
+                }) { Text(stringResource(R.string.create)) }
+            },
+            dismissButton = {
+                Button(onClick = { showCreateBlank = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
             }
         )
     }

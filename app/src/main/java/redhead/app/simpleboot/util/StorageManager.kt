@@ -47,6 +47,48 @@ object StorageManager {
     }
 
     /**
+     * Creates a blank (zero-filled) ISO or IMG file in the SimpleBootISOs directory.
+     * @param fileName Name of the file (without extension).
+     * @param extension "iso" or "img".
+     * @param sizeMB Size in megabytes.
+     * @return The created File, or null on failure.
+     */
+    fun createBlankImage(context: Context, fileName: String, extension: String, sizeMB: Int): File? {
+        val safeName = fileName.replace(Regex("[^a-zA-Z0-9_\\- ]"), "_").trim()
+        if (safeName.isEmpty()) {
+            log("createBlankImage: invalid file name")
+            return null
+        }
+        if (sizeMB <= 0) {
+            log("createBlankImage: size must be > 0")
+            return null
+        }
+
+        ensureDirectories()
+        val ext = if (extension.lowercase(Locale.getDefault()) == "img") "img" else "iso"
+        val file = File(ISO_DIR, "$safeName.$ext")
+
+        if (file.exists()) {
+            log("createBlankImage: file already exists: ${file.absolutePath}")
+            return null
+        }
+
+        return try {
+            log("createBlankImage: creating ${file.name} (${sizeMB} MB)")
+            // Use dd-style allocation via RandomAccessFile for sparse file support
+            java.io.RandomAccessFile(file, "rw").use { raf ->
+                raf.setLength(sizeMB.toLong() * 1024 * 1024)
+            }
+            log("createBlankImage: success -> ${file.absolutePath} (${file.length()} bytes)")
+            file
+        } catch (e: Exception) {
+            log("createBlankImage: failed -> ${e.message}")
+            file.delete()
+            null
+        }
+    }
+
+    /**
      * Retrieves a list of ISO/IMG files from the SimpleBootISOs directory.
      * @return List of IsoFile objects representing found files.
      */
