@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -177,7 +178,7 @@ fun AppScreen() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("SimpleBoot - v2.0") },
+                title = { Text("SimpleBoot - v2.1") },
                 actions = {
                     var menuExpanded by remember { mutableStateOf(false) }
 
@@ -213,8 +214,14 @@ fun AppScreen() {
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                Text(
+                    text = "SimpleBoot v2.1",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 Button(
                     onClick = {
                         LogManager.logToFile(context, "Export log button clicked")
@@ -234,7 +241,8 @@ fun AppScreen() {
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 var methodExpanded by remember { mutableStateOf(false) }
                 ExposedDropdownMenuBox(

@@ -46,7 +46,7 @@ fun CreditsScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("SimpleBoot - v2.0") },
+                title = { Text("SimpleBoot - v2.1") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -131,7 +131,7 @@ fun CreditsScreen(onBack: () -> Unit) {
             Spacer(modifier = Modifier.height(40.dp))
 
             Text(
-                text = "SimpleBoot v2.0\n© 2025 RedHead Industries",
+                text = "SimpleBoot v2.1\n© 2025 RedHead Industries",
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.Light
