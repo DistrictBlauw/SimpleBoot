@@ -385,7 +385,10 @@ object MountController {
                     "fi",
             // Link function into configuration and enable gadget
             "ln -s $funcPath $gadgetPath/configs/$configDir/ || true",
-            "sync", "sleep 1", "echo $udc > $gadgetPath/UDC"
+            "sync", "sleep 1", "echo $udc > $gadgetPath/UDC",
+            // Re-enable USB as mass_storage so the host sees the device
+            "setprop sys.usb.config mass_storage,adb",
+            "setprop sys.usb.state mass_storage,adb"
         )
 
         // -------------------------------------------------------------------------
@@ -487,7 +490,10 @@ object MountController {
 
             // Link, sync, and enable gadget
             "ln -s $funcPath $gadgetPath/configs/$configDir/ || true",
-            "sync", "sleep 1", "echo $udc > $gadgetPath/UDC"
+            "sync", "sleep 1", "echo $udc > $gadgetPath/UDC",
+            // Re-enable USB as mass_storage so the host sees the device
+            "setprop sys.usb.config mass_storage,adb",
+            "setprop sys.usb.state mass_storage,adb"
         )
 
         // -------------------------------------------------------------------------
