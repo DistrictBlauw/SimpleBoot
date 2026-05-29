@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.topjohnwu.superuser.Shell
@@ -38,7 +39,7 @@ class MainActivity : ComponentActivity() {
 
         // Flexible root detection: prefer libsu but fall back to probing common su binaries
         if (!hasRootAccess()) {
-            Toast.makeText(this, "Root access is required!", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.root_required), Toast.LENGTH_LONG).show()
             LogManager.logToFile(this, "Root access missing - closing app")
             finish()
         }
@@ -101,14 +102,19 @@ fun AppScreen() {
     var isoList by remember { mutableStateOf<List<IsoFile>>(emptyList()) }
     var currentMount by remember { mutableStateOf<MountStateStore.MountInfo?>(null) }
     val snackbarHostState = remember { SnackbarHostState() }
-    var statusText by remember { mutableStateOf("Status: Idle") }
+    var statusText by remember { mutableStateOf("") }
     var showMountMenu by remember { mutableStateOf(false) }
     var selectedIso by remember { mutableStateOf<IsoFile?>(null) }
     var selectedMethod by remember { mutableStateOf(MountMethod.CONFIGFS) }
     var selectedUsbMode by remember { mutableStateOf(UsbMode.USB_HDD) }
     var showCredits by remember { mutableStateOf(false) }
 
+    val strStatusIdle = stringResource(R.string.status_idle)
+    val strUnknownError = stringResource(R.string.unknown_error)
+    val strAnotherMounted = stringResource(R.string.another_mounted)
+
     LaunchedEffect(Unit) {
+        if (statusText.isEmpty()) statusText = strStatusIdle
         LogManager.logToFile(context, "AppScreen launched - checking storage access")
 
         if (!Environment.isExternalStorageManager()) {
@@ -137,20 +143,20 @@ fun AppScreen() {
                 val result = MountController.unmount(context)
                 if (result.success) {
                     currentMount = null
-                    statusText = "Unmounted: ${iso.name}"
+                    statusText = context.getString(R.string.unmounted_msg, iso.name)
                     snackbarHostState.showSnackbar(statusText)
                     isoList = StorageManager.getIsoFileList()
                     LogManager.logToFile(context, "Successfully unmounted ${iso.name}")
                 } else {
-                    val message = result.message.ifBlank { "Unknown error occurred." }
-                    snackbarHostState.showSnackbar("Failed to unmount: $message")
+                    val message = result.message.ifBlank { strUnknownError }
+                    snackbarHostState.showSnackbar(context.getString(R.string.unmount_failed, message))
                     LogManager.logToFile(context, "Unmount failed for ${iso.name}: $message")
                 }
                 return@launch
             }
 
             if (currentMount != null) {
-                snackbarHostState.showSnackbar("Another ISO is already mounted.")
+                snackbarHostState.showSnackbar(strAnotherMounted)
                 LogManager.logToFile(context, "Mount blocked - another ISO already mounted.")
                 return@launch
             }
@@ -158,13 +164,13 @@ fun AppScreen() {
             val result = MountController.mount(context, iso.path, method, mode)
             if (result.success) {
                 currentMount = MountStateStore.load(context)
-                statusText = "Mounted (${method.name}, ${mode.name}): ${iso.name}"
+                statusText = context.getString(R.string.mounted_status, method.name, mode.name, iso.name)
                 snackbarHostState.showSnackbar(statusText)
                 isoList = StorageManager.getIsoFileList()
                 LogManager.logToFile(context, "Mount successful -> ${iso.name} (${method.name}/${mode.name})")
             } else {
-                val message = result.message.ifBlank { "Unknown error occurred." }
-                snackbarHostState.showSnackbar("Failed to mount: $message")
+                val message = result.message.ifBlank { strUnknownError }
+                snackbarHostState.showSnackbar(context.getString(R.string.mount_failed, message))
                 LogManager.logToFile(context, "Mount failed for ${iso.name}: $message")
             }
         }
@@ -178,14 +184,14 @@ fun AppScreen() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("SimpleBoot - v2.1") },
+                title = { Text(stringResource(R.string.app_version_label)) },
                 actions = {
                     var menuExpanded by remember { mutableStateOf(false) }
 
                     IconButton(onClick = { menuExpanded = true }) {
                         Icon(
                             painter = painterResource(id = android.R.drawable.ic_menu_more),
-                            contentDescription = "More options"
+                            contentDescription = stringResource(R.string.more_options)
                         )
                     }
 
@@ -194,7 +200,7 @@ fun AppScreen() {
                         onDismissRequest = { menuExpanded = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Credits") },
+                            text = { Text(stringResource(R.string.credits)) },
                             onClick = {
                                 menuExpanded = false
                                 showCredits = true
@@ -218,7 +224,7 @@ fun AppScreen() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "SimpleBoot v2.1",
+                    text = stringResource(R.string.app_version_short),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -227,14 +233,14 @@ fun AppScreen() {
                         LogManager.logToFile(context, "Export log button clicked")
                         val intent = LogManager.exportLogFile(context)
                         if (intent != null) {
-                            context.startActivity(Intent.createChooser(intent, "Share SimpleBoot Log"))
+                            context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_log_title)))
                             LogManager.logToFile(context, "Log export intent launched")
                         } else {
-                            Toast.makeText(context, "No log file available", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.no_log_file), Toast.LENGTH_SHORT).show()
                             LogManager.logToFile(context, "No log file available to export")
                         }
                     }
-                ) { Text("Export Log") }
+                ) { Text(stringResource(R.string.export_log)) }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -254,7 +260,7 @@ fun AppScreen() {
                         value = selectedMethod.name,
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Mount Method") },
+                        label = { Text(stringResource(R.string.mount_method)) },
                         modifier = Modifier
                             .menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled = true)
                             .fillMaxWidth()
@@ -286,7 +292,7 @@ fun AppScreen() {
                         value = selectedUsbMode.name,
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("USB Method") },
+                        label = { Text(stringResource(R.string.usb_method)) },
                         modifier = Modifier
                             .menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled = true)
                             .fillMaxWidth()
@@ -336,7 +342,7 @@ fun AppScreen() {
                         ) {
                             Text(text = iso.name, style = MaterialTheme.typography.titleMedium)
                             Text(
-                                text = if (isMounted) "Mounted" else "Not mounted",
+                                text = if (isMounted) stringResource(R.string.mounted) else stringResource(R.string.not_mounted),
                                 color = if (isMounted) MaterialTheme.colorScheme.primary
                                 else MaterialTheme.colorScheme.onSurface
                             )
@@ -347,7 +353,7 @@ fun AppScreen() {
                 if (isoList.isEmpty()) {
                     item {
                         Text(
-                            text = "No ISO/IMG files found in /storage/emulated/0/SimpleBootISOs.",
+                            text = stringResource(R.string.no_iso_found),
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(16.dp)
                         )
@@ -361,12 +367,12 @@ fun AppScreen() {
     if (showMountMenu && selectedIso != null) {
         AlertDialog(
             onDismissRequest = { showMountMenu = false },
-            title = { Text("Mount Options") },
+            title = { Text(stringResource(R.string.mount_options)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("File: ${selectedIso?.name}")
-                    Text("Method: ${selectedMethod.name}")
-                    Text("USB Method: ${selectedUsbMode.name}")
+                    Text(context.getString(R.string.file_label, selectedIso?.name ?: ""))
+                    Text(context.getString(R.string.method_label, selectedMethod.name))
+                    Text(context.getString(R.string.usb_method_label, selectedUsbMode.name))
                 }
             },
             confirmButton = {
@@ -374,13 +380,13 @@ fun AppScreen() {
                     LogManager.logToFile(context, "Mount confirmed for ${selectedIso?.name}")
                     handleMount(selectedIso!!, selectedMethod, selectedUsbMode)
                     showMountMenu = false
-                }) { Text("Mount") }
+                }) { Text(stringResource(R.string.mount)) }
             },
             dismissButton = {
                 Button(onClick = {
                     LogManager.logToFile(context, "Mount dialog cancelled")
                     showMountMenu = false
-                }) { Text("Cancel") }
+                }) { Text(stringResource(R.string.cancel)) }
             }
         )
     }

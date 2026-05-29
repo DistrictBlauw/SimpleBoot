@@ -8,6 +8,8 @@
 >
 > Thank you for your patience during this rebranding process.
 
+[简体中文](./README_zh-CN.md)
+
 ---
 
 # SimpleBoot – Turn your phone into a bootable USB device!

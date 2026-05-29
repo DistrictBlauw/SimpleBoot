@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,12 +47,12 @@ fun CreditsScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("SimpleBoot - v2.1") },
+                title = { Text(stringResource(R.string.app_version_label)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             painter = painterResource(id = android.R.drawable.ic_media_previous),
-                            contentDescription = "Back"
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
                 }
@@ -69,7 +70,7 @@ fun CreditsScreen(onBack: () -> Unit) {
             // RedHead logo
             Image(
                 painter = painterResource(id = R.drawable.redhead_logo),
-                contentDescription = "RedHead Industries Logo",
+                contentDescription = stringResource(R.string.redhead_logo_desc),
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .aspectRatio(3.2f)
@@ -77,10 +78,17 @@ fun CreditsScreen(onBack: () -> Unit) {
                 contentScale = ContentScale.Fit
             )
 
-            // Profile picture (Matthew DaLuz)
+            // --- Original Author ---
+            Text(
+                text = stringResource(R.string.original_author_label),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
             Image(
                 painter = painterResource(id = R.drawable.matthew_profile),
-                contentDescription = "Matthew DaLuz",
+                contentDescription = stringResource(R.string.matthew_name),
                 modifier = Modifier
                     .size(112.dp)
                     .padding(bottom = 12.dp)
@@ -90,13 +98,13 @@ fun CreditsScreen(onBack: () -> Unit) {
             )
 
             Text(
-                text = "Matthew DaLuz",
+                text = stringResource(R.string.matthew_name),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold
             )
 
             Text(
-                text = "Lead Developer, RedHead Industries\nmatthewdaluz@redheadindustries.xyz",
+                text = stringResource(R.string.matthew_role),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(vertical = 8.dp)
@@ -104,8 +112,33 @@ fun CreditsScreen(onBack: () -> Unit) {
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
 
+            // --- Fork Maintainer ---
             Text(
-                text = "SimpleBoot is a free and open-source Android application developed under RedHead Technologies.",
+                text = stringResource(R.string.fork_maintainer_label),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            Text(
+                text = stringResource(R.string.fork_maintainer_name),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                text = stringResource(R.string.fork_maintainer_github),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(vertical = 4.dp)
+            )
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+
+            // --- App Info ---
+            Text(
+                text = stringResource(R.string.app_description),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -113,7 +146,7 @@ fun CreditsScreen(onBack: () -> Unit) {
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Licensed under the GNU General Public License v3 (GPLv3).",
+                text = stringResource(R.string.license_text),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -125,13 +158,13 @@ fun CreditsScreen(onBack: () -> Unit) {
                 val intent = Intent(Intent.ACTION_VIEW, url)
                 context.startActivity(intent)
             }) {
-                Text("Visit RedHead Industries")
+                Text(stringResource(R.string.visit_redhead))
             }
 
             Spacer(modifier = Modifier.height(40.dp))
 
             Text(
-                text = "SimpleBoot v2.1\n© 2025 RedHead Industries",
+                text = stringResource(R.string.copyright_text),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodySmall,
                 fontWeight = FontWeight.Light
@@ -147,4 +180,3 @@ fun PreviewCreditsScreen() {
         CreditsScreen(onBack = {})
     }
 }
-

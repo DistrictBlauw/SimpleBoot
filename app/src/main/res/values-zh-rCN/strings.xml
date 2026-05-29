@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">SimpleBoot</string>
+    <string name="app_version_label">SimpleBoot - v2.1</string>
+    <string name="app_version_short">SimpleBoot v2.1</string>
+
+    <!-- MainActivity -->
+    <string name="root_required">需要Root权限！</string>
+    <string name="status_idle">状态：空闲</string>
+    <string name="more_options">更多选项</string>
+    <string name="credits">关于</string>
+    <string name="export_log">导出日志</string>
+    <string name="share_log_title">分享 SimpleBoot 日志</string>
+    <string name="no_log_file">没有可用的日志文件</string>
+    <string name="mount_method">挂载方式</string>
+    <string name="usb_method">USB模式</string>
+    <string name="mounted">已挂载</string>
+    <string name="not_mounted">未挂载</string>
+    <string name="no_iso_found">在 /storage/emulated/0/SimpleBootISOs 中未找到ISO/IMG文件。</string>
+    <string name="mount_options">挂载选项</string>
+    <string name="file_label">文件：%s</string>
+    <string name="method_label">方式：%s</string>
+    <string name="usb_method_label">USB模式：%s</string>
+    <string name="mount">挂载</string>
+    <string name="cancel">取消</string>
+    <string name="unmounted_msg">已卸载：%s</string>
+    <string name="unmount_failed">卸载失败：%s</string>
+    <string name="another_mounted">已有其他ISO文件被挂载。</string>
+    <string name="mounted_status">已挂载（%s, %s）：%s</string>
+    <string name="mount_failed">挂载失败：%s</string>
+    <string name="unknown_error">发生未知错误。</string>
+
+    <!-- Credits -->
+    <string name="credits_title">关于</string>
+    <string name="back">返回</string>
+    <string name="redhead_logo_desc">RedHead Industries 标志</string>
+    <string name="matthew_name">Matthew DaLuz</string>
+    <string name="matthew_role">首席开发者，RedHead Industries\nmatthewdaluz@redheadindustries.xyz</string>
+    <string name="original_author_label">原作者</string>
+    <string name="fork_maintainer_label">二改维护者</string>
+    <string name="fork_maintainer_name">DistrictBlauw</string>
+    <string name="fork_maintainer_github">@DistrictBlauw</string>
+    <string name="app_description">SimpleBoot 是一款由 RedHead Technologies 开发的免费开源Android应用程序。</string>
+    <string name="license_text">基于 GNU 通用公共许可证第三版 (GPLv3) 授权。</string>
+    <string name="visit_redhead">访问 RedHead Industries</string>
+    <string name="copyright_text">SimpleBoot v2.1\n© 2025 RedHead Industries</string>
+</resources>

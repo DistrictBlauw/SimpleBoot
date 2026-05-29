@@ -1,3 +1,46 @@
 <resources>
     <string name="app_name">SimpleBoot</string>
+    <string name="app_version_label">SimpleBoot - v2.1</string>
+    <string name="app_version_short">SimpleBoot v2.1</string>
+
+    <!-- MainActivity -->
+    <string name="root_required">Root access is required!</string>
+    <string name="status_idle">Status: Idle</string>
+    <string name="more_options">More options</string>
+    <string name="credits">Credits</string>
+    <string name="export_log">Export Log</string>
+    <string name="share_log_title">Share SimpleBoot Log</string>
+    <string name="no_log_file">No log file available</string>
+    <string name="mount_method">Mount Method</string>
+    <string name="usb_method">USB Method</string>
+    <string name="mounted">Mounted</string>
+    <string name="not_mounted">Not mounted</string>
+    <string name="no_iso_found">No ISO/IMG files found in /storage/emulated/0/SimpleBootISOs.</string>
+    <string name="mount_options">Mount Options</string>
+    <string name="file_label">File: %s</string>
+    <string name="method_label">Method: %s</string>
+    <string name="usb_method_label">USB Method: %s</string>
+    <string name="mount">Mount</string>
+    <string name="cancel">Cancel</string>
+    <string name="unmounted_msg">Unmounted: %s</string>
+    <string name="unmount_failed">Failed to unmount: %s</string>
+    <string name="another_mounted">Another ISO is already mounted.</string>
+    <string name="mounted_status">Mounted (%s, %s): %s</string>
+    <string name="mount_failed">Failed to mount: %s</string>
+    <string name="unknown_error">Unknown error occurred.</string>
+
+    <!-- Credits -->
+    <string name="credits_title">Credits</string>
+    <string name="back">Back</string>
+    <string name="redhead_logo_desc">RedHead Industries Logo</string>
+    <string name="matthew_name">Matthew DaLuz</string>
+    <string name="matthew_role">Lead Developer, RedHead Industries\nmatthewdaluz@redheadindustries.xyz</string>
+    <string name="original_author_label">Original Author</string>
+    <string name="fork_maintainer_label">Fork Maintainer</string>
+    <string name="fork_maintainer_name">DistrictBlauw</string>
+    <string name="fork_maintainer_github">@DistrictBlauw</string>
+    <string name="app_description">SimpleBoot is a free and open-source Android application developed under RedHead Technologies.</string>
+    <string name="license_text">Licensed under the GNU General Public License v3 (GPLv3).</string>
+    <string name="visit_redhead">Visit RedHead Industries</string>
+    <string name="copyright_text">SimpleBoot v2.1\n© 2025 RedHead Industries</string>
 </resources>
