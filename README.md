@@ -13,7 +13,8 @@
 # SimpleBoot – Turn your phone into a bootable USB device!
 **Version:** v2.1 [BETA] “Monster – Milestone 2”  
 **License:** GNU General Public License v3 (GPLv3)  
-**Developer:** RedHead Industries (Technologies Branch) + Matthew DaLuz [@matthewdaluz](https://github.com/matthewdaluz)
+**Original Developer:** RedHead Industries (Technologies Branch) + Matthew DaLuz [@matthewdaluz](https://github.com/matthewdaluz)  
+**Fork Maintainer:** DistrictBlauw [@DistrictBlauw](https://github.com/DistrictBlauw)
 
 **SimpleBoot** is a powerful, root-required Android app that transforms your phone into a fully bootable USB device. Mount ISO/IMG files via **ConfigFS**, **Legacy mass_storage**, or raw **Loopback** mode and boot directly into live systems on any PC.
 
@@ -41,8 +42,8 @@
 ## 📸 Screenshots
 
 <p align="center">
-<img width="200" height="2400" alt="Screenshot_20251112-090816_SimpleBoot" src="https://github.com/user-attachments/assets/e142920c-f9a4-46b2-bb16-caea69cda997" />
-<img width="200" height="2400" alt="Screenshot_20251112-090820_SimpleBoot" src="https://github.com/user-attachments/assets/48a7adc9-c170-478b-ab4e-ba6f4f744611" />
+<img width="270" height="585" alt="Screenshot_20251112-090816_SimpleBoot" src="https://github.com/user-attachments/assets/e142920c-f9a4-46b2-bb16-caea69cda997" />
+<img width="270" height="585" alt="Screenshot_20251112-090820_SimpleBoot" src="https://github.com/user-attachments/assets/48a7adc9-c170-478b-ab4e-ba6f4f744611" />
 </p>
 
 
@@ -124,7 +125,8 @@ Pull requests welcome for:
 
 ## 🙏 Credits
 
-- **Lead Dev:** [@matthewdaluz](https://github.com/matthewdaluz)
+- **Original Lead Dev:** [@matthewdaluz](https://github.com/matthewdaluz) / RedHead Industries
+- **Fork Maintainer:** [@DistrictBlauw](https://github.com/DistrictBlauw)
 - **AI Assistants:** ChatGPT + DeepSeek
 - **Special Thanks:** The open-source Android root community
 
