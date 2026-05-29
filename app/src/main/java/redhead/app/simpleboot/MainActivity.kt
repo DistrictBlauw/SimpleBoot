@@ -283,15 +283,14 @@ fun AppScreen() {
                     }
                 ) { Text(stringResource(R.string.export_log)) }
                 if (debugEnabled) {
+                    val strDumpDone = stringResource(R.string.debug_dump_done)
                     Spacer(modifier = Modifier.width(8.dp))
                     OutlinedButton(
                         onClick = {
                             LogManager.logToFile(context, "Debug dump button clicked")
                             DebugManager.dumpUsbState(context)
                             coroutineScope.launch {
-                                snackbarHostState.showSnackbar(
-                                    stringResource(R.string.debug_dump_done)
-                                )
+                                snackbarHostState.showSnackbar(strDumpDone)
                             }
                         }
                     ) { Text(stringResource(R.string.debug_dump)) }
@@ -577,6 +576,8 @@ fun AppScreen() {
     if (showDebugPassword) {
         var passwordInput by remember { mutableStateOf("") }
         var passwordError by remember { mutableStateOf(false) }
+        val strDebugEnabled = stringResource(R.string.debug_enabled)
+        val strDebugDisabled = stringResource(R.string.debug_disabled)
 
         AlertDialog(
             onDismissRequest = { showDebugPassword = false; passwordError = false; passwordInput = "" },
@@ -610,8 +611,8 @@ fun AppScreen() {
                         LogManager.logToFile(context, "Debug mode ${if (newState) "ENABLED" else "DISABLED"}")
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar(
-                                if (newState) stringResource(R.string.debug_enabled)
-                                else stringResource(R.string.debug_disabled)
+                                if (newState) strDebugEnabled
+                                else strDebugDisabled
                             )
                         }
                         showDebugPassword = false

@@ -1,6 +1,7 @@
 package redhead.app.simpleboot.util
 
 import android.content.Context
+import com.topjohnwu.superuser.Shell
 
 object DebugManager {
     private const val PREFS = "SimpleBootPrefs"
