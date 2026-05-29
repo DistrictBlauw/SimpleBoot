@@ -130,7 +130,7 @@ GNU GPLv3 – 详见 [LICENSE](./LICENSE)
 
 - **原作者：** [@matthewdaluz](https://github.com/matthewdaluz) / RedHead Industries
 - **二改维护：** [@DistrictBlauw](https://github.com/DistrictBlauw)
-- **AI助手：** ChatGPT + DeepSeek
+- **AI助手：** XiaoMi MiMo-v2.5-Pro
 - **特别感谢：** 开源Android Root社区
 
 ---

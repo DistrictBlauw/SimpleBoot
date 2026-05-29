@@ -161,6 +161,16 @@ fun CreditsScreen(onBack: () -> Unit) {
                 Text(stringResource(R.string.visit_redhead))
             }
 
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedButton(onClick = {
+                val url = "https://github.com/DistrictBlauw/SimpleBoot".toUri()
+                val intent = Intent(Intent.ACTION_VIEW, url)
+                context.startActivity(intent)
+            }) {
+                Text(stringResource(R.string.visit_github))
+            }
+
             Spacer(modifier = Modifier.height(40.dp))
 
             Text(

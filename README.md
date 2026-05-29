@@ -130,7 +130,7 @@ Pull requests welcome for:
 
 - **Original Lead Dev:** [@matthewdaluz](https://github.com/matthewdaluz) / RedHead Industries
 - **Fork Maintainer:** [@DistrictBlauw](https://github.com/DistrictBlauw)
-- **AI Assistants:** ChatGPT + DeepSeek
+- **AI Assistants:** XiaoMi MiMo-v2.5-Pro
 - **Special Thanks:** The open-source Android root community
 
 ---

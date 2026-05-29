@@ -54,5 +54,6 @@
     <string name="app_description">SimpleBoot is a free and open-source Android application developed under RedHead Technologies.</string>
     <string name="license_text">Licensed under the GNU General Public License v3 (GPLv3).</string>
     <string name="visit_redhead">Visit RedHead Industries</string>
+    <string name="visit_github">Visit GitHub Repository</string>
     <string name="copyright_text">SimpleBoot v2.1\n© 2025 RedHead Industries</string>
 </resources>
