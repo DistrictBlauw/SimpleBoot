@@ -113,6 +113,8 @@ fun AppScreen() {
     var showCreateBlank by remember { mutableStateOf(false) }
     var showDeleteConfirm by remember { mutableStateOf(false) }
     var isoToDelete by remember { mutableStateOf<IsoFile?>(null) }
+    var showDebugPassword by remember { mutableStateOf(false) }
+    var debugEnabled by remember { mutableStateOf(DebugManager.isEnabled(context)) }
 
     val strStatusIdle = stringResource(R.string.status_idle)
     val strUnknownError = stringResource(R.string.unknown_error)
@@ -220,6 +222,18 @@ fun AppScreen() {
                         onDismissRequest = { menuExpanded = false }
                     ) {
                         DropdownMenuItem(
+                            text = {
+                                Text(
+                                    if (debugEnabled) stringResource(R.string.debug_mode_off)
+                                    else stringResource(R.string.debug_mode_on)
+                                )
+                            },
+                            onClick = {
+                                menuExpanded = false
+                                showDebugPassword = true
+                            }
+                        )
+                        DropdownMenuItem(
                             text = { Text(stringResource(R.string.create_blank_iso)) },
                             onClick = {
                                 menuExpanded = false
@@ -268,6 +282,19 @@ fun AppScreen() {
                         }
                     }
                 ) { Text(stringResource(R.string.export_log)) }
+                if (debugEnabled) {
+                    val strDumpDone = stringResource(R.string.debug_dump_done)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    OutlinedButton(
+                        onClick = {
+                            LogManager.logToFile(context, "Debug dump button clicked")
+                            DebugManager.dumpUsbState(context)
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar(strDumpDone)
+                            }
+                        }
+                    ) { Text(stringResource(R.string.debug_dump)) }
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -542,6 +569,64 @@ fun AppScreen() {
                 Button(onClick = { showDeleteConfirm = false; isoToDelete = null }) {
                     Text(stringResource(R.string.cancel))
                 }
+            }
+        )
+    }
+
+    if (showDebugPassword) {
+        var passwordInput by remember { mutableStateOf("") }
+        var passwordError by remember { mutableStateOf(false) }
+        val strDebugEnabled = stringResource(R.string.debug_enabled)
+        val strDebugDisabled = stringResource(R.string.debug_disabled)
+
+        AlertDialog(
+            onDismissRequest = { showDebugPassword = false; passwordError = false; passwordInput = "" },
+            title = { Text(stringResource(R.string.debug_password_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(R.string.debug_password_hint))
+                    OutlinedTextField(
+                        value = passwordInput,
+                        onValueChange = { passwordInput = it; passwordError = false },
+                        label = { Text(stringResource(R.string.password)) },
+                        singleLine = true,
+                        isError = passwordError,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    if (passwordError) {
+                        Text(
+                            text = stringResource(R.string.debug_password_wrong),
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                Button(onClick = {
+                    if (DebugManager.verifyPassword(passwordInput)) {
+                        val newState = !debugEnabled
+                        DebugManager.setEnabled(context, newState)
+                        debugEnabled = newState
+                        LogManager.logToFile(context, "Debug mode ${if (newState) "ENABLED" else "DISABLED"}")
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar(
+                                if (newState) strDebugEnabled
+                                else strDebugDisabled
+                            )
+                        }
+                        showDebugPassword = false
+                        passwordInput = ""
+                    } else {
+                        passwordError = true
+                        LogManager.logToFile(context, "Debug mode password attempt failed")
+                    }
+                }) { Text(stringResource(R.string.confirm)) }
+            },
+            dismissButton = {
+                Button(onClick = {
+                    showDebugPassword = false; passwordInput = ""; passwordError = false
+                }) { Text(stringResource(R.string.cancel)) }
             }
         )
     }

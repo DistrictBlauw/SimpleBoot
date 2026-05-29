@@ -46,6 +46,19 @@
     <string name="delete_success">已删除：%s</string>
     <string name="delete_failed">删除文件失败。</string>
 
+    <!-- Debug Mode -->
+    <string name="debug_mode_on">开启调试模式</string>
+    <string name="debug_mode_off">关闭调试模式</string>
+    <string name="debug_password_title">调试模式</string>
+    <string name="debug_password_hint">输入调试密码以切换调试模式。</string>
+    <string name="password">密码</string>
+    <string name="confirm">确认</string>
+    <string name="debug_password_wrong">密码错误。</string>
+    <string name="debug_enabled">调试模式已开启 — 详细日志记录中</string>
+    <string name="debug_disabled">调试模式已关闭</string>
+    <string name="debug_dump">调试转储</string>
+    <string name="debug_dump_done">USB状态已转储到日志</string>
+
     <!-- Credits -->
     <string name="credits_title">关于</string>
     <string name="back">返回</string>
