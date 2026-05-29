@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      KEYSTORE_FILE: ${{ runner.temp }}/keystore.jks
+      KEYSTORE_FILE: /tmp/keystore.jks
 
     steps:
       - name: Checkout code
