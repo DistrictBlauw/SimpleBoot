@@ -247,7 +247,8 @@ fun AppScreen() {
                 var methodExpanded by remember { mutableStateOf(false) }
                 ExposedDropdownMenuBox(
                     expanded = methodExpanded,
-                    onExpandedChange = { methodExpanded = !methodExpanded }
+                    onExpandedChange = { methodExpanded = !methodExpanded },
+                    modifier = Modifier.weight(1f)
                 ) {
                     OutlinedTextField(
                         value = selectedMethod.name,
@@ -256,7 +257,7 @@ fun AppScreen() {
                         label = { Text("Mount Method") },
                         modifier = Modifier
                             .menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled = true)
-                            .weight(1f)
+                            .fillMaxWidth()
                     )
                     ExposedDropdownMenu(
                         expanded = methodExpanded,
@@ -278,7 +279,8 @@ fun AppScreen() {
                 var usbExpanded by remember { mutableStateOf(false) }
                 ExposedDropdownMenuBox(
                     expanded = usbExpanded,
-                    onExpandedChange = { usbExpanded = !usbExpanded }
+                    onExpandedChange = { usbExpanded = !usbExpanded },
+                    modifier = Modifier.weight(1f)
                 ) {
                     OutlinedTextField(
                         value = selectedUsbMode.name,
@@ -287,7 +289,7 @@ fun AppScreen() {
                         label = { Text("USB Method") },
                         modifier = Modifier
                             .menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled = true)
-                            .weight(1f)
+                            .fillMaxWidth()
                     )
                     ExposedDropdownMenu(
                         expanded = usbExpanded,
