@@ -454,14 +454,14 @@ fun AppScreen() {
                     val result = StorageManager.createBlankImage(context, blankName, blankExt, sizeMB)
                     if (result != null) {
                         statusText = String.format(strBlankCreated, result.name)
-                        snackbarHostState.showSnackbar(statusText)
+                        coroutineScope.launch { snackbarHostState.showSnackbar(statusText) }
                         isoList = StorageManager.getIsoFileList()
                         LogManager.logToFile(context, "Blank image created: ${result.name}")
                         showCreateBlank = false
                     } else if (blankName.isBlank()) {
-                        snackbarHostState.showSnackbar(strBlankInvalidName)
+                        coroutineScope.launch { snackbarHostState.showSnackbar(strBlankInvalidName) }
                     } else {
-                        snackbarHostState.showSnackbar(strBlankExists)
+                        coroutineScope.launch { snackbarHostState.showSnackbar(strBlankExists) }
                     }
                 }) { Text(stringResource(R.string.create)) }
             },
