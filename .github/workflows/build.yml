@@ -63,3 +63,39 @@ jobs:
         with:
           name: lint-report
           path: app/build/reports/lint-results-*.html
+
+  release:
+    needs: [ build, lint ]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Debug APK
+        uses: actions/download-artifact@v4
+        with:
+          name: simpleboot-debug
+          path: apk
+
+      - name: Generate release tag
+        id: tag
+        run: |
+          VERSION="v$(grep versionName app/build.gradle | head -1 | sed 's/.*"\(.*\)".*/\1/')"
+          SHORT_SHA="$(git rev-parse --short HEAD)"
+          echo "tag=${VERSION}-ci.${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+          echo "name=SimpleBoot ${VERSION} (${SHORT_SHA})" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ steps.tag.outputs.tag }}" \
+            --repo "${{ github.repository }}" \
+            --title "${{ steps.tag.outputs.name }}" \
+            --notes "Automated CI build from commit $(git rev-parse --short HEAD)" \
+            --latest \
+            apk/*.apk
