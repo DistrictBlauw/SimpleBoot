@@ -34,12 +34,17 @@
     <string name="create_blank_title">Create Blank Image</string>
     <string name="file_name">File name</string>
     <string name="file_format">Format</string>
-    <string name="file_size_mb">Size (MB)</string>
+    <string name="file_size_mb">Size</string>
     <string name="create">Create</string>
     <string name="blank_iso_created">Created: %s</string>
     <string name="blank_iso_failed">Failed to create image.</string>
     <string name="blank_iso_exists">File already exists.</string>
     <string name="blank_iso_invalid_name">Invalid file name.</string>
+    <string name="delete">Delete</string>
+    <string name="delete_confirm_title">Delete File</string>
+    <string name="delete_confirm_msg">Are you sure you want to delete %s?</string>
+    <string name="delete_success">Deleted: %s</string>
+    <string name="delete_failed">Failed to delete file.</string>
 
     <!-- Credits -->
     <string name="credits_title">Credits</string>

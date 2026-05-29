@@ -50,16 +50,16 @@ object StorageManager {
      * Creates a blank (zero-filled) ISO or IMG file in the SimpleBootISOs directory.
      * @param fileName Name of the file (without extension).
      * @param extension "iso" or "img".
-     * @param sizeMB Size in megabytes.
+     * @param sizeBytes Size in bytes.
      * @return The created File, or null on failure.
      */
-    fun createBlankImage(context: Context, fileName: String, extension: String, sizeMB: Int): File? {
+    fun createBlankImage(context: Context, fileName: String, extension: String, sizeBytes: Long): File? {
         val safeName = fileName.replace(Regex("[^a-zA-Z0-9_\\- ]"), "_").trim()
         if (safeName.isEmpty()) {
             log("createBlankImage: invalid file name")
             return null
         }
-        if (sizeMB <= 0) {
+        if (sizeBytes <= 0) {
             log("createBlankImage: size must be > 0")
             return null
         }
@@ -74,10 +74,9 @@ object StorageManager {
         }
 
         return try {
-            log("createBlankImage: creating ${file.name} (${sizeMB} MB)")
-            // Use dd-style allocation via RandomAccessFile for sparse file support
+            log("createBlankImage: creating ${file.name} ($sizeBytes bytes)")
             java.io.RandomAccessFile(file, "rw").use { raf ->
-                raf.setLength(sizeMB.toLong() * 1024 * 1024)
+                raf.setLength(sizeBytes)
             }
             log("createBlankImage: success -> ${file.absolutePath} (${file.length()} bytes)")
             file
@@ -85,6 +84,30 @@ object StorageManager {
             log("createBlankImage: failed -> ${e.message}")
             file.delete()
             null
+        }
+    }
+
+    /**
+     * Deletes an ISO/IMG file from the SimpleBootISOs directory.
+     * @return true if deleted successfully, false otherwise.
+     */
+    fun deleteIsoFile(context: Context, filePath: String): Boolean {
+        val file = File(filePath)
+        if (!file.exists()) {
+            log("deleteIsoFile: file does not exist: $filePath")
+            return false
+        }
+        if (!file.parentFile?.absolutePath.equals(ISO_DIR.absolutePath)) {
+            log("deleteIsoFile: file is not in ISO directory: $filePath")
+            return false
+        }
+        return try {
+            val deleted = file.delete()
+            log("deleteIsoFile: ${file.name} deleted=$deleted")
+            deleted
+        } catch (e: Exception) {
+            log("deleteIsoFile: failed -> ${e.message}")
+            false
         }
     }
 

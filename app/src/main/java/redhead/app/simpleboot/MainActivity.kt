@@ -12,6 +12,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -109,6 +111,8 @@ fun AppScreen() {
     var selectedUsbMode by remember { mutableStateOf(UsbMode.USB_HDD) }
     var showCredits by remember { mutableStateOf(false) }
     var showCreateBlank by remember { mutableStateOf(false) }
+    var showDeleteConfirm by remember { mutableStateOf(false) }
+    var isoToDelete by remember { mutableStateOf<IsoFile?>(null) }
 
     val strStatusIdle = stringResource(R.string.status_idle)
     val strUnknownError = stringResource(R.string.unknown_error)
@@ -126,6 +130,8 @@ fun AppScreen() {
     val strBlankFailed = stringResource(R.string.blank_iso_failed)
     val strBlankExists = stringResource(R.string.blank_iso_exists)
     val strBlankInvalidName = stringResource(R.string.blank_iso_invalid_name)
+    val strDeleteSuccess = stringResource(R.string.delete_success)
+    val strDeleteFailed = stringResource(R.string.delete_failed)
 
     LaunchedEffect(Unit) {
         if (statusText.isEmpty()) statusText = strStatusIdle
@@ -352,21 +358,36 @@ fun AppScreen() {
                             .fillMaxWidth()
                             .padding(vertical = 6.dp)
                     ) {
-                        Column(
+                        Row(
                             modifier = Modifier
-                                .padding(12.dp)
+                                .fillMaxWidth()
                                 .clickable {
                                     selectedIso = iso
                                     showMountMenu = true
                                     LogManager.logToFile(context, "ISO clicked: ${iso.name}")
                                 }
+                                .padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(text = iso.name, style = MaterialTheme.typography.titleMedium)
-                            Text(
-                                text = if (isMounted) stringResource(R.string.mounted) else stringResource(R.string.not_mounted),
-                                color = if (isMounted) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.onSurface
-                            )
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(text = iso.name, style = MaterialTheme.typography.titleMedium)
+                                Text(
+                                    text = if (isMounted) stringResource(R.string.mounted) else stringResource(R.string.not_mounted),
+                                    color = if (isMounted) MaterialTheme.colorScheme.primary
+                                    else MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                            IconButton(onClick = {
+                                isoToDelete = iso
+                                showDeleteConfirm = true
+                                LogManager.logToFile(context, "Delete requested for: ${iso.name}")
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = stringResource(R.string.delete),
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            }
                         }
                     }
                 }
@@ -416,6 +437,7 @@ fun AppScreen() {
         var blankName by remember { mutableStateOf("") }
         var blankSize by remember { mutableStateOf("64") }
         var blankExt by remember { mutableStateOf("iso") }
+        var blankUnit by remember { mutableStateOf("MB") }
 
         AlertDialog(
             onDismissRequest = { showCreateBlank = false },
@@ -437,6 +459,15 @@ fun AppScreen() {
                         modifier = Modifier.fillMaxWidth()
                     )
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        listOf("KB", "MB", "GB").forEach { unit ->
+                            FilterChip(
+                                selected = blankUnit == unit,
+                                onClick = { blankUnit = unit },
+                                label = { Text(unit) }
+                            )
+                        }
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         listOf("iso" to "ISO", "img" to "IMG").forEach { (ext, label) ->
                             FilterChip(
                                 selected = blankExt == ext,
@@ -449,9 +480,14 @@ fun AppScreen() {
             },
             confirmButton = {
                 Button(onClick = {
-                    val sizeMB = blankSize.toIntOrNull() ?: 0
-                    LogManager.logToFile(context, "Create blank image: name=$blankName, ext=$blankExt, size=${sizeMB}MB")
-                    val result = StorageManager.createBlankImage(context, blankName, blankExt, sizeMB)
+                    val sizeNum = blankSize.toLongOrNull() ?: 0L
+                    val sizeBytes = when (blankUnit) {
+                        "KB" -> sizeNum * 1024
+                        "GB" -> sizeNum * 1024 * 1024 * 1024
+                        else -> sizeNum * 1024 * 1024
+                    }
+                    LogManager.logToFile(context, "Create blank image: name=$blankName, ext=$blankExt, size=$sizeNum$blankUnit ($sizeBytes bytes)")
+                    val result = StorageManager.createBlankImage(context, blankName, blankExt, sizeBytes)
                     if (result != null) {
                         statusText = String.format(strBlankCreated, result.name)
                         coroutineScope.launch { snackbarHostState.showSnackbar(statusText) }
@@ -467,6 +503,43 @@ fun AppScreen() {
             },
             dismissButton = {
                 Button(onClick = { showCreateBlank = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
+    if (showDeleteConfirm && isoToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { showDeleteConfirm = false },
+            title = { Text(stringResource(R.string.delete_confirm_title)) },
+            text = { Text(String.format(stringResource(R.string.delete_confirm_msg), isoToDelete?.name ?: "")) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        val iso = isoToDelete!!
+                        LogManager.logToFile(context, "Deleting ISO: ${iso.name}")
+                        val deleted = StorageManager.deleteIsoFile(context, iso.path)
+                        if (deleted) {
+                            statusText = String.format(strDeleteSuccess, iso.name)
+                            coroutineScope.launch { snackbarHostState.showSnackbar(statusText) }
+                            isoList = StorageManager.getIsoFileList()
+                            LogManager.logToFile(context, "Deleted: ${iso.name}")
+                        } else {
+                            coroutineScope.launch { snackbarHostState.showSnackbar(strDeleteFailed) }
+                            LogManager.logToFile(context, "Delete failed: ${iso.name}")
+                        }
+                        showDeleteConfirm = false
+                        isoToDelete = null
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
+                    )
+                ) { Text(stringResource(R.string.delete)) }
+            },
+            dismissButton = {
+                Button(onClick = { showDeleteConfirm = false; isoToDelete = null }) {
                     Text(stringResource(R.string.cancel))
                 }
             }
