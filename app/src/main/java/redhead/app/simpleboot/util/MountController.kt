@@ -386,9 +386,17 @@ object MountController {
             // Link function into configuration and enable gadget
             "ln -s $funcPath $gadgetPath/configs/$configDir/ || true",
             "sync", "sleep 1", "echo $udc > $gadgetPath/UDC",
-            // Re-enable USB as mass_storage so the host sees the device
-            "setprop sys.usb.config mass_storage,adb",
-            "setprop sys.usb.state mass_storage,adb"
+            // Switch Android USB mode to mass_storage
+            "setprop sys.usb.config mass_storage",
+            "setprop sys.usb.state mass_storage",
+            "sleep 2",
+            // Force USB function via Android service if available
+            "svc usb setFunction mass_storage 2>/dev/null || true",
+            "sleep 1",
+            // Re-bind UDC to ensure the device is attached
+            "echo '' > $gadgetPath/UDC || true",
+            "sleep 1",
+            "echo $udc > $gadgetPath/UDC"
         )
 
         // -------------------------------------------------------------------------
@@ -491,9 +499,17 @@ object MountController {
             // Link, sync, and enable gadget
             "ln -s $funcPath $gadgetPath/configs/$configDir/ || true",
             "sync", "sleep 1", "echo $udc > $gadgetPath/UDC",
-            // Re-enable USB as mass_storage so the host sees the device
-            "setprop sys.usb.config mass_storage,adb",
-            "setprop sys.usb.state mass_storage,adb"
+            // Switch Android USB mode to mass_storage
+            "setprop sys.usb.config mass_storage",
+            "setprop sys.usb.state mass_storage",
+            "sleep 2",
+            // Force USB function via Android service if available
+            "svc usb setFunction mass_storage 2>/dev/null || true",
+            "sleep 1",
+            // Re-bind UDC to ensure the device is attached
+            "echo '' > $gadgetPath/UDC || true",
+            "sleep 1",
+            "echo $udc > $gadgetPath/UDC"
         )
 
         // -------------------------------------------------------------------------
