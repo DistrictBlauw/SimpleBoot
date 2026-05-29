@@ -25,7 +25,7 @@
     <string name="unmounted_msg">Unmounted: %s</string>
     <string name="unmount_failed">Failed to unmount: %s</string>
     <string name="another_mounted">Another ISO is already mounted.</string>
-    <string name="mounted_status">Mounted (%s, %s): %s</string>
+    <string name="mounted_status">Mounted (%1$s, %2$s): %3$s</string>
     <string name="mount_failed">Failed to mount: %s</string>
     <string name="unknown_error">Unknown error occurred.</string>
 

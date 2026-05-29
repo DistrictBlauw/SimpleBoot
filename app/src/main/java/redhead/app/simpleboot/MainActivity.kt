@@ -112,6 +112,15 @@ fun AppScreen() {
     val strStatusIdle = stringResource(R.string.status_idle)
     val strUnknownError = stringResource(R.string.unknown_error)
     val strAnotherMounted = stringResource(R.string.another_mounted)
+    val strUnmountedMsg = stringResource(R.string.unmounted_msg)
+    val strUnmountFailed = stringResource(R.string.unmount_failed)
+    val strMountedStatus = stringResource(R.string.mounted_status)
+    val strMountFailed = stringResource(R.string.mount_failed)
+    val strShareLog = stringResource(R.string.share_log_title)
+    val strNoLogFile = stringResource(R.string.no_log_file)
+    val strFileLabel = stringResource(R.string.file_label)
+    val strMethodLabel = stringResource(R.string.method_label)
+    val strUsbMethodLabel = stringResource(R.string.usb_method_label)
 
     LaunchedEffect(Unit) {
         if (statusText.isEmpty()) statusText = strStatusIdle
@@ -143,13 +152,13 @@ fun AppScreen() {
                 val result = MountController.unmount(context)
                 if (result.success) {
                     currentMount = null
-                    statusText = context.getString(R.string.unmounted_msg, iso.name)
+                    statusText = String.format(strUnmountedMsg, iso.name)
                     snackbarHostState.showSnackbar(statusText)
                     isoList = StorageManager.getIsoFileList()
                     LogManager.logToFile(context, "Successfully unmounted ${iso.name}")
                 } else {
                     val message = result.message.ifBlank { strUnknownError }
-                    snackbarHostState.showSnackbar(context.getString(R.string.unmount_failed, message))
+                    snackbarHostState.showSnackbar(String.format(strUnmountFailed, message))
                     LogManager.logToFile(context, "Unmount failed for ${iso.name}: $message")
                 }
                 return@launch
@@ -164,13 +173,13 @@ fun AppScreen() {
             val result = MountController.mount(context, iso.path, method, mode)
             if (result.success) {
                 currentMount = MountStateStore.load(context)
-                statusText = context.getString(R.string.mounted_status, method.name, mode.name, iso.name)
+                statusText = String.format(strMountedStatus, method.name, mode.name, iso.name)
                 snackbarHostState.showSnackbar(statusText)
                 isoList = StorageManager.getIsoFileList()
                 LogManager.logToFile(context, "Mount successful -> ${iso.name} (${method.name}/${mode.name})")
             } else {
                 val message = result.message.ifBlank { strUnknownError }
-                snackbarHostState.showSnackbar(context.getString(R.string.mount_failed, message))
+                snackbarHostState.showSnackbar(String.format(strMountFailed, message))
                 LogManager.logToFile(context, "Mount failed for ${iso.name}: $message")
             }
         }
@@ -233,10 +242,10 @@ fun AppScreen() {
                         LogManager.logToFile(context, "Export log button clicked")
                         val intent = LogManager.exportLogFile(context)
                         if (intent != null) {
-                            context.startActivity(Intent.createChooser(intent, context.getString(R.string.share_log_title)))
+                            context.startActivity(Intent.createChooser(intent, strShareLog))
                             LogManager.logToFile(context, "Log export intent launched")
                         } else {
-                            Toast.makeText(context, context.getString(R.string.no_log_file), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, strNoLogFile, Toast.LENGTH_SHORT).show()
                             LogManager.logToFile(context, "No log file available to export")
                         }
                     }
@@ -370,9 +379,9 @@ fun AppScreen() {
             title = { Text(stringResource(R.string.mount_options)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(context.getString(R.string.file_label, selectedIso?.name ?: ""))
-                    Text(context.getString(R.string.method_label, selectedMethod.name))
-                    Text(context.getString(R.string.usb_method_label, selectedUsbMode.name))
+                    Text(String.format(strFileLabel, selectedIso?.name ?: ""))
+                    Text(String.format(strMethodLabel, selectedMethod.name))
+                    Text(String.format(strUsbMethodLabel, selectedUsbMode.name))
                 }
             },
             confirmButton = {

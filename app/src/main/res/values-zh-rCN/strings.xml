@@ -25,7 +25,7 @@
     <string name="unmounted_msg">已卸载：%s</string>
     <string name="unmount_failed">卸载失败：%s</string>
     <string name="another_mounted">已有其他ISO文件被挂载。</string>
-    <string name="mounted_status">已挂载（%s, %s）：%s</string>
+    <string name="mounted_status">已挂载（%1$s, %2$s）：%3$s</string>
     <string name="mount_failed">挂载失败：%s</string>
     <string name="unknown_error">发生未知错误。</string>
 
