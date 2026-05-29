@@ -73,6 +73,11 @@ object MountController {
         logToFile(context, "[CMD:$label] ${commands.joinToString(" && ")}")
         if (out.isNotBlank()) logToFile(context, "[OUT:$label] ${out.take(4000)}")
         if (err.isNotBlank()) logToFile(context, "[ERR:$label] ${err.take(4000)}")
+        if (DebugManager.isEnabled(context)) {
+            logToFile(context, "[DEBUG:$label] exitCode=${res.code}, isSuccess=${res.isSuccess}")
+            if (out.isNotBlank()) logToFile(context, "[DEBUG-OUT:$label] $out")
+            if (err.isNotBlank()) logToFile(context, "[DEBUG-ERR:$label] $err")
+        }
     }
 
     // ---------- Shell helpers ----------
@@ -216,8 +221,20 @@ object MountController {
             }
         }
 
+        if (DebugManager.isEnabled(context)) {
+            logToFile(context, "[mount] DEBUG MODE ON - dumping USB state before mount")
+            DebugManager.dumpUsbState(context)
+            logToFile(context, "[mount] DEBUG file exists=${File(isoPath).exists()}, size=${File(isoPath).length()} bytes")
+            logToFile(context, "[mount] DEBUG isoPath absolute=${File(isoPath).absolutePath}")
+        }
+
         logToFile(context, "[mount] Disabling Android USB stack")
-        Shell.cmd("setprop sys.usb.config none", "setprop sys.usb.state none").exec()
+        val disableResult = Shell.cmd("setprop sys.usb.config none", "setprop sys.usb.state none").exec()
+        if (DebugManager.isEnabled(context)) {
+            logToFile(context, "[mount] DEBUG disable USB -> success=${disableResult.isSuccess}")
+            logToFile(context, "[mount] DEBUG sys.usb.config=${Shell.cmd("getprop sys.usb.config").exec().out}")
+            logToFile(context, "[mount] DEBUG sys.usb.state=${Shell.cmd("getprop sys.usb.state").exec().out}")
+        }
 
         val result = when (method) {
             MountMethod.AUTO -> mountAuto(context, isoPath, lun)
@@ -225,6 +242,13 @@ object MountController {
             MountMethod.LEGACY -> mountUsingLegacy(context, isoPath, lun)
             MountMethod.LOOPBACK -> mountUsingLoopback(context, isoPath)
             MountMethod.PIXEL -> mountUsingPixel(context, isoPath, lun)
+        }
+
+        if (DebugManager.isEnabled(context)) {
+            logToFile(context, "[mount] DEBUG dumping USB state after mount attempt")
+            DebugManager.dumpUsbState(context)
+            logToFile(context, "[mount] DEBUG post-mount sys.usb.config=${Shell.cmd("getprop sys.usb.config").exec().out}")
+            logToFile(context, "[mount] DEBUG post-mount sys.usb.state=${Shell.cmd("getprop sys.usb.state").exec().out}")
         }
 
         logToFile(context, "[mount] Result -> success=${result.success}, message='${result.message}'")
@@ -367,6 +391,26 @@ object MountController {
         // -------------------------------------------------------------------------
         // Execute and handle result
         // -------------------------------------------------------------------------
+        if (DebugManager.isEnabled(context)) {
+            logToFile(context, "[mountUsingConfigFs] DEBUG executing ${cmds.size} commands step-by-step")
+            for ((i, cmd) in cmds.withIndex()) {
+                val r = Shell.cmd(cmd).exec()
+                val out = r.out.joinToString("\n")
+                val err = r.err.joinToString("\n")
+                logToFile(context, "[mountUsingConfigFs] DEBUG step[$i] cmd=$cmd")
+                logToFile(context, "[mountUsingConfigFs] DEBUG step[$i] success=${r.isSuccess} code=${r.code}")
+                if (out.isNotBlank()) logToFile(context, "[mountUsingConfigFs] DEBUG step[$i] out=$out")
+                if (err.isNotBlank()) logToFile(context, "[mountUsingConfigFs] DEBUG step[$i] err=$err")
+            }
+            logToFile(context, "[mountUsingConfigFs] DEBUG verifying UDC and LUN file")
+            val udcVal = Shell.cmd("cat ${gadgetPath}/UDC 2>/dev/null").exec().out.joinToString("")
+            val lunFile = Shell.cmd("cat ${lunDir}/file 2>/dev/null").exec().out.joinToString("")
+            logToFile(context, "[mountUsingConfigFs] DEBUG UDC='$udcVal', LUN file='$lunFile'")
+            MountStateStore.save(context, isoPath, loop, lun.toString())
+            LogManager.logMount(context, File(isoPath).name, "$loop via configfs (USB_HDD) [DEBUG]")
+            return MountResult(true, "Mounted using ConfigFS (USB_HDD) [DEBUG].", loop)
+        }
+
         val result = Shell.cmd(*cmds.toTypedArray()).exec()
 
         return if (result.isSuccess) {
