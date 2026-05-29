@@ -46,6 +46,19 @@
     <string name="delete_success">Deleted: %s</string>
     <string name="delete_failed">Failed to delete file.</string>
 
+    <!-- Debug Mode -->
+    <string name="debug_mode_on">Enable Debug Mode</string>
+    <string name="debug_mode_off">Disable Debug Mode</string>
+    <string name="debug_password_title">Debug Mode</string>
+    <string name="debug_password_hint">Enter debug password to toggle debug mode.</string>
+    <string name="password">Password</string>
+    <string name="confirm">Confirm</string>
+    <string name="debug_password_wrong">Incorrect password.</string>
+    <string name="debug_enabled">Debug mode ON — verbose logging active</string>
+    <string name="debug_disabled">Debug mode OFF</string>
+    <string name="debug_dump">Debug Dump</string>
+    <string name="debug_dump_done">USB state dumped to log</string>
+
     <!-- Credits -->
     <string name="credits_title">Credits</string>
     <string name="back">Back</string>
